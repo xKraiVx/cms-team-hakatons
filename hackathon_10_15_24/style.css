@@ -12,3 +12,196 @@
 }
 
 /* #endregion Variables */
+
+/* #region Start styling */
+.clients {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  gap: 3rem;
+}
+
+.client {
+  position: relative;
+  padding: 1rem;
+  border: 1px solid var(--grey);
+  border-radius: 1rem;
+  width: 100%;
+  max-height: 1rem;
+  transition: max-height 0.5s ease;
+  overflow: hidden;
+  cursor: pointer;
+
+  & > div:not(:first-child) {
+    margin-left: 2rem;
+  }
+}
+
+.client__info {
+  margin-bottom: 16px;
+}
+
+.marriage-with,
+.children {
+  padding: 16px;
+}
+
+.client:hover {
+  max-height: 100vh;
+  background-color: var(--white);
+}
+
+/* #endregion Start styling */
+
+/* #region Children detection */
+
+.client__info:after {
+  content: "Has no children";
+  color: var(--red);
+}
+
+.client:has(.children .info:nth-child(1)) .client__info:after {
+  content: "Enaugh children";
+  color: var(--green);
+}
+
+.client:has(.children .info:nth-child(3)) .client__info:after {
+  content: "Too much children";
+  color: var(--orange);
+}
+
+/* #endregion Children detection */
+
+/* #region Color BG */
+
+body:has(.client:is(:hover)) {
+  & .client:not(:is(:hover)) {
+    opacity: 0.5;
+    & *,
+    & .client__info::before,
+    & .client__info::after {
+      color: var(--black) !important;
+    }
+  }
+}
+
+.client::before {
+  content: "";
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  z-index: -1;
+  transition: all 0.3s ease;
+  pointer-events: none;
+}
+
+.client:has(.client__info [data-sex="man"])::before {
+  transform: translate(-100%);
+  background-color: var(--blue);
+}
+.client:has(.client__info [data-sex="woman"])::before {
+  transform: translate(100%);
+  background-color: var(--pink);
+}
+
+.client.client:hover::before {
+  transform: translate(0);
+}
+
+/* #endregion Color BG */
+
+/* #region Arrow */
+
+body:has(.client:is(:hover)) {
+  & .client:not(:is(:hover))::after {
+    filter: brightness(0) saturate(100%) invert(0%) sepia(4%) saturate(0%)
+      hue-rotate(309deg) brightness(100%) contrast(107%);
+  }
+}
+
+.client:after {
+  position: absolute;
+  content: "";
+  top: 0.5rem;
+  right: 1rem;
+  width: 2rem;
+  height: 2rem;
+  background: url(arrow.webp) no-repeat center center;
+  background-size: contain;
+  transform: rotate(90deg);
+  transition: transform 0.3s ease;
+}
+
+.client:has(.client__info [data-sex="man"])::after {
+  filter: brightness(0) saturate(100%) invert(90%) sepia(6%) saturate(5030%)
+    hue-rotate(168deg) brightness(92%) contrast(100%);
+}
+
+.client:has(.client__info [data-sex="woman"])::after {
+  filter: brightness(0) saturate(100%) invert(97%) sepia(56%) saturate(4132%)
+    hue-rotate(218deg) brightness(93%) contrast(85%);
+}
+
+.client:hover::after {
+  transform: rotate(-90deg);
+}
+
+/* #endregion Arrow */
+
+/* #region Biological gender detection */
+
+.children:before,
+.marriage-with:before {
+  display: block;
+}
+
+.marriage-with:has([data-sex="man"])::before {
+  content: "Husband: ";
+}
+
+.marriage-with:has([data-sex="woman"])::before {
+  content: "Wife: ";
+}
+
+.info:has([data-sex="man"]) .name {
+  color: var(--blue);
+}
+
+.info:has([data-sex="woman"]) .name {
+  color: var(--pink);
+}
+
+.children::before {
+  content: "Children: ";
+}
+
+.children:not(:has([data-sex="woman"]))::before {
+  content: "Children are boys: ";
+}
+.children:not(:has([data-sex="man"]))::before {
+  content: "Children are girls: ";
+}
+
+/* #endregion Gender detection */
+
+/* #region Clients and children counters */
+
+.client {
+  counter-increment: client-inc;
+}
+
+.client__info:before {
+  content: counter(client-inc) ". ";
+}
+
+.children .info {
+  counter-increment: child-inc;
+}
+
+.children .info::before {
+  content: counter(child-inc) ". ";
+}
+
+/* #endregion Clients and children counters */
